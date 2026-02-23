@@ -1,0 +1,121 @@
+def cuenta_regresiva(n):
+"""Imprime números de n hasta 1."""
+if n <= 0: # CASO BASE
+print("¡Despegue!")
+return
+print(n) # Acción
+cuenta_regresiva(n - 1) # CASO RECURSIVO (n se reduce)
+# Llamada
+cuenta_regresiva(5)
+# Salida: 5, 4, 3, 2, 1, ¡Despegue!
+
+def factorial(n):
+"""Calcula n! de forma recursiva."""
+# Caso base
+if n <= 1:
+return 1
+# Caso recursivo
+return n * factorial(n - 1)
+# Ejemplo de ejecución:
+# factorial(4)
+# = 4 * factorial(3)
+# = 4 * (3 * factorial(2))
+# = 4 * (3 * (2 * factorial(1)))
+# = 4 * (3 * (2 * 1))
+# = 4 * (3 * 2) = 4 * 6 = 24
+
+def fibonacci(n):
+"""Calcula el n-ésimo número de Fibonacci."""
+# Casos base
+if n == 0:
+return 0
+if n == 1:
+return 1
+# Caso recursivo (dos llamadas)
+return fibonacci(n - 1) + fibonacci(n - 2)
+# Prueba
+for i in range(10):
+print(fibonacci(i), end=" ")
+# Salida: 0 1 1 2 3 5 8 13 21 34
+
+def suma_lista(lista):
+"""Suma todos los elementos de una lista."""
+# Caso base: lista vacía
+if len(lista) == 0:
+return 0
+# Caso recursivo: primer elemento + suma del resto
+return lista[0] + suma_lista(lista[1:])
+# Ejemplo:
+# suma_lista([1, 2, 3, 4])
+# = 1 + suma_lista([2, 3, 4])
+# = 1 + (2 + suma_lista([3, 4]))
+# = 1 + (2 + (3 + suma_lista([4])))
+# = 1 + (2 + (3 + (4 + suma_lista([]))))
+# = 1 + 2 + 3 + 4 + 0 = 10
+
+Recursividad en listas enlazadas
+
+Las listas enlazadas son naturalmente recursivas:
+
+Una lista es:
+
+• Vacía (None) → caso base
+
+• Un nodo + otra lista → caso recursivo
+
+Estructura recursiva:
+
+[dato | siguiente] → [dato | siguiente] → None
+
+└── nodo ──────────┘ └── sublista ────────┘
+
+Longitud de lista (recursivo)
+
+def longitud(nodo):
+"""Cuenta nodos de forma recursiva."""
+# Caso base: llegamos al final
+if nodo is None:
+return 0
+# Caso recursivo: 1 + longitud del resto
+return 1 + longitud(nodo.siguiente)
+# Como método de la clase:
+class ListaEnlazada:
+def longitud_recursiva(self, nodo=None):
+if nodo is None:
+nodo = self.cabeza
+if nodo is None:
+return 0
+return 1 + self.longitud_recursiva(nodo.siguiente)
+
+Buscar en lista (recursivo)
+
+def buscar_recursivo(nodo, dato):
+"""Busca un dato en la lista de forma recursiva."""
+# Caso base 1: lista vacía, no encontrado
+if nodo is None:
+return False
+# Caso base 2: encontrado
+if nodo.dato == dato:
+return True
+# Caso recursivo: buscar en el resto
+return buscar_recursivo(nodo.siguiente, dato)
+# Uso:
+encontrado = buscar_recursivo(lista.cabeza, 42)
+
+Imprimir lista (recursivo)
+
+def imprimir_lista(nodo):
+"""Imprime la lista de forma recursiva."""
+if nodo is None:
+print("None")
+return
+print(f"{nodo.dato} -> ", end="")
+imprimir_lista(nodo.siguiente)
+def imprimir_inverso(nodo):
+"""Imprime la lista en orden inverso."""
+if nodo is None:
+return
+# Primero procesar el resto (llegar al final)
+imprimir_inverso(nodo.siguiente)
+# Luego imprimir este nodo (al volver)
+print(nodo.dato, end=" ")
