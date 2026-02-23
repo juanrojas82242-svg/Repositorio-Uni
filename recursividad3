@@ -1,0 +1,89 @@
+Recorrer adelante (recursivo)
+
+def recorrer_adelante_rec(self, nodo):
+    if nodo is None:
+        print("Fin")
+        return
+
+    print(nodo.dato, end=" --> ")
+    self.recorrer_adelante_rec(nodo.siguiente)
+
+
+self.recorrer_adelante_rec(self.cabeza)
+```
+
+---
+Recorrer desde el final (recursivo)
+def recorrer_final_rec(self, nodo):
+    if nodo is None:
+        print("Fin")
+        return
+
+    print(nodo.dato, end=" --> ")
+    self.recorrer_final_rec(nodo.anterior)
+
+self.recorrer_final_rec(self.cola)
+```
+
+---
+
+Buscar (versión recursiva)
+
+def buscar_rec(self, nodo, dato):
+    if nodo is None:
+        return False
+
+    if nodo.dato == dato:
+        return True
+
+    return self.buscar_rec(nodo.siguiente, dato)
+
+self.buscar_rec(self.cabeza, dato)
+```
+
+---
+
+Longitud recursiva
+
+def len_rec(self, nodo):
+    if nodo is None:
+        return 0
+    return 1 + self.len_rec(nodo.siguiente)
+
+def __len__(self):
+    return self.len_rec(self.cabeza)
+```
+
+---
+
+ **str** recursivo
+def str_rec(self, nodo):
+    if nodo is None:
+        return ""
+    if nodo.siguiente is None:
+        return str(nodo.dato)
+    return str(nodo.dato) + "<=>" + self.str_rec(nodo.siguiente)
+
+def __str__(self):
+    if self.esta_vacia():
+        return "Empty Playlist"
+    return self.str_rec(self.cabeza)
+
+
+Eliminar recursivamente
+
+def eliminar_valor_rec(self, nodo, dato):
+    if nodo is None:
+        return None
+
+    if nodo.dato == dato:
+        if nodo.anterior:
+            nodo.anterior.siguiente = nodo.siguiente
+        if nodo.siguiente:
+            nodo.siguiente.anterior = nodo.anterior
+        return nodo.siguiente
+
+    nodo.siguiente = self.eliminar_valor_rec(nodo.siguiente, dato)
+    return nodo
+
+
