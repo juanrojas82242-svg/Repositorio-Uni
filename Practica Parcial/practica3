@@ -1,0 +1,193 @@
+EJERCICIO FINAL — “Análisis de red y detección de ataques”
+📌 Enunciado
+
+Se tiene un conjunto de logs de tráfico de red:
+
+IP:192.168.1.1 Status:OK Bytes:1200 Time:10:00
+IP:10.0.0.5 Status:FAIL Bytes:300 Time:10:01
+IP:192.168.1.1 Status:OK Bytes:800 Time:10:02
+IP:172.16.0.3 Status:OK Bytes:1500 Time:10:03
+IP:10.0.0.5 Status:FAIL Bytes:200 Time:10:04
+IP:192.168.1.1 Status:OK Bytes:500 Time:10:05
+🎯 Debes:
+1️⃣ Regex
+Extraer:
+IP
+Status
+Bytes
+Hora
+2️⃣ Lista enlazada (filtrada)
+Guardar SOLO registros con Status = OK
+3️⃣ Conjuntos
+Detectar IPs únicas
+Detectar IPs sospechosas (más de 1 FAIL)
+4️⃣ Recursividad (nivel alto)
+Sumar todos los bytes de la lista enlazada
+5️⃣ Recursividad + memoización
+Calcular número de formas de analizar paquetes:
+
+👉 Si puedes analizar 1, 2 o 3 paquetes por paso
+👉 (esto es tipo Tribonacci)
+
+6️⃣ EXTRA (nivel final real)
+Eliminar nodos de IPs sospechosas de la lista enlazada (recursivo)
+
+
+import re
+from functools import lru_cache
+
+# =========================
+# 1. Nodo
+# =========================
+class Nodo:
+    def __init__(self, ip, status, bytes, hora):
+        self.ip = ip
+        self.status = status
+        self.bytes = int(bytes)
+        self.hora = hora
+        self.siguiente = None
+
+
+# =========================
+# 2. Regex
+# =========================
+def parsear_log(linea):
+    patron = r"IP:(\d+\.\d+\.\d+\.\d+)\s+Status:(\w+)\s+Bytes:(\d+)\s+Time:(\d{2}:\d{2})"
+    match = re.match(patron, linea)
+    
+    if match:
+        return match.groups()
+    return None
+
+
+# =========================
+# 3. Insertar al final
+# =========================
+def insertar_final(head, nodo):
+    if head is None:
+        return nodo
+    
+    actual = head
+    while actual.siguiente:
+        actual = actual.siguiente
+    
+    actual.siguiente = nodo
+    return head
+
+
+# =========================
+# 4. Construir estructura
+# =========================
+def procesar_logs(logs):
+    head = None
+    ips_unicas = set()
+    contador_fail = {}
+
+    for linea in logs:
+        datos = parsear_log(linea)
+
+        if datos:
+            ip, status, bytes, hora = datos
+
+            ips_unicas.add(ip)
+
+            # contar FAIL
+            if status == "FAIL":
+                contador_fail[ip] = contador_fail.get(ip, 0) + 1
+
+            # guardar solo OK
+            if status == "OK":
+                nodo = Nodo(ip, status, bytes, hora)
+                head = insertar_final(head, nodo)
+
+    # detectar sospechosas
+    sospechosas = {ip for ip, count in contador_fail.items() if count > 1}
+
+    return head, ips_unicas, sospechosas
+
+
+# =========================
+# 5. Imprimir (recursivo)
+# =========================
+def imprimir_lista(nodo):
+    if nodo is None:
+        return
+    
+    print(f"{nodo.ip} - {nodo.bytes} bytes ({nodo.hora})")
+    imprimir_lista(nodo.siguiente)
+
+
+# =========================
+# 6. Sumar bytes (recursivo)
+# =========================
+def sumar_bytes(nodo):
+    if nodo is None:
+        return 0
+    return nodo.bytes + sumar_bytes(nodo.siguiente)
+
+
+# =========================
+# 7. Eliminar sospechosos (recursivo)
+# =========================
+def eliminar_sospechosos(nodo, sospechosas):
+    if nodo is None:
+        return None
+    
+    if nodo.ip in sospechosas:
+        return eliminar_sospechosos(nodo.siguiente, sospechosas)
+    
+    nodo.siguiente = eliminar_sospechosos(nodo.siguiente, sospechosas)
+    return nodo
+
+
+# =========================
+# 8. Memoización (Tribonacci)
+# =========================
+@lru_cache(maxsize=None)
+def formas_analisis(n):
+    if n == 0:
+        return 1
+    if n < 0:
+        return 0
+    
+    return (
+        formas_analisis(n-1) +
+        formas_analisis(n-2) +
+        formas_analisis(n-3)
+    )
+
+
+# =========================
+# 9. Main
+# =========================
+def main():
+    logs = [
+        "IP:192.168.1.1 Status:OK Bytes:1200 Time:10:00",
+        "IP:10.0.0.5 Status:FAIL Bytes:300 Time:10:01",
+        "IP:192.168.1.1 Status:OK Bytes:800 Time:10:02",
+        "IP:172.16.0.3 Status:OK Bytes:1500 Time:10:03",
+        "IP:10.0.0.5 Status:FAIL Bytes:200 Time:10:04",
+        "IP:192.168.1.1 Status:OK Bytes:500 Time:10:05"
+    ]
+
+    head, ips, sospechosas = procesar_logs(logs)
+
+    print("=== Lista original (OK) ===")
+    imprimir_lista(head)
+
+    print("\nIPs únicas:", ips)
+    print("IPs sospechosas:", sospechosas)
+
+    print("\n=== Total bytes ===")
+    print(sumar_bytes(head))
+
+    print("\n=== Eliminando sospechosos ===")
+    head = eliminar_sospechosos(head, sospechosas)
+    imprimir_lista(head)
+
+    print("\n=== Formas de análisis ===")
+    print(formas_analisis(len(ips)))
+
+
+if __name__ == "__main__":
+    main()
