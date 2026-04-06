@@ -1,0 +1,153 @@
+Ejercicio 2 — “Análisis de logs del sistema”
+📌 Enunciado
+
+Se recibe un conjunto de logs de acceso:
+
+[INFO] User:juan Action:login Time:12:00
+[ERROR] User:ana Action:login Time:12:05
+[INFO] User:carlos Action:logout Time:12:10
+[INFO] User:juan Action:login Time:12:15
+[INFO] User:ana Action:login Time:12:20
+🎯 Debes:
+1️⃣ Regex
+Extraer:
+Nivel (INFO, ERROR)
+Usuario
+Acción
+Hora
+2️⃣ Lista enlazada
+Guardar solo logs válidos (INFO) en una lista enlazada
+3️⃣ Conjuntos
+Obtener usuarios únicos que hicieron login
+4️⃣ Recursividad
+Contar cuántos logs hay en la lista enlazada
+5️⃣ Memoización
+Calcular número de formas de ordenar los usuarios únicos
+👉 (permutaciones: n!)
+
+
+import re
+from functools import lru_cache
+
+# =========================
+# 1. Nodo lista enlazada
+# =========================
+class Nodo:
+    def __init__(self, nivel, usuario, accion, hora):
+        self.nivel = nivel
+        self.usuario = usuario
+        self.accion = accion
+        self.hora = hora
+        self.siguiente = None
+
+
+# =========================
+# 2. Regex parser
+# =========================
+def parsear_log(linea):
+    patron = r"\[(\w+)\]\s+User:(\w+)\s+Action:(\w+)\s+Time:(\d{2}:\d{2})"
+    match = re.match(patron, linea)
+    
+    if match:
+        return match.groups()
+    return None
+
+
+# =========================
+# 3. Insertar al final
+# =========================
+def insertar_final(head, nodo):
+    if head is None:
+        return nodo
+    
+    actual = head
+    while actual.siguiente:
+        actual = actual.siguiente
+    
+    actual.siguiente = nodo
+    return head
+
+
+# =========================
+# 4. Construir lista
+# =========================
+def construir_lista(logs):
+    head = None
+    usuarios_login = set()
+
+    for linea in logs:
+        datos = parsear_log(linea)
+
+        if datos:
+            nivel, usuario, accion, hora = datos
+
+            if nivel == "INFO":
+                nuevo = Nodo(nivel, usuario, accion, hora)
+                head = insertar_final(head, nuevo)
+
+                if accion == "login":
+                    usuarios_login.add(usuario)
+
+    return head, usuarios_login
+
+
+# =========================
+# 5. Recorrer lista (recursivo)
+# =========================
+def imprimir_lista(nodo):
+    if nodo is None:
+        return
+    
+    print(f"[{nodo.nivel}] {nodo.usuario} - {nodo.accion} ({nodo.hora})")
+    imprimir_lista(nodo.siguiente)
+
+
+# =========================
+# 6. Contar nodos (recursivo)
+# =========================
+def contar_nodos(nodo):
+    if nodo is None:
+        return 0
+    return 1 + contar_nodos(nodo.siguiente)
+
+
+# =========================
+# 7. Memoización (factorial)
+# =========================
+@lru_cache(maxsize=None)
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+
+# =========================
+# 8. Programa principal
+# =========================
+def main():
+    logs = [
+        "[INFO] User:juan Action:login Time:12:00",
+        "[ERROR] User:ana Action:login Time:12:05",
+        "[INFO] User:carlos Action:logout Time:12:10",
+        "[INFO] User:juan Action:login Time:12:15",
+        "[INFO] User:ana Action:login Time:12:20"
+    ]
+
+    head, usuarios = construir_lista(logs)
+
+    print("=== Logs válidos (INFO) ===")
+    imprimir_lista(head)
+
+    print("\n=== Estadísticas ===")
+    total_logs = contar_nodos(head)
+    print(f"Cantidad de logs INFO: {total_logs}")
+
+    print(f"Usuarios únicos con login: {usuarios}")
+    print(f"Total usuarios únicos: {len(usuarios)}")
+
+    print("\n=== Permutaciones posibles ===")
+    print(f"Formas de ordenar usuarios: {factorial(len(usuarios))}")
+
+
+if __name__ == "__main__":
+    main()
