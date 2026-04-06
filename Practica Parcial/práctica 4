@@ -1,0 +1,158 @@
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                        EJERCICIO - PROGRAMACIÓN EN PYTHON
+                                  REPASO
+═══════════════════════════════════════════════════════════════════════════════
+
+CONTEXTO:
+---------
+Una red social necesita un sistema para recomendar amigos a los usuarios.
+El sistema debe validar nombres de usuario, almacenarlos en una lista enlazada,
+permitir búsquedas recursivas y aplicar operaciones con conjuntos.
+
+INSTRUCCIONES:
+--------------
+1. Diseñar la clase Nodo (Usuario) con los atributos necesarios
+2. Diseñar la clase Lista (RedSocial) con los métodos requeridos
+3. Usar RECURSIVIDAD en los métodos donde se indique
+4. No usar listas de Python [], solo tu estructura de nodos
+5. Tiempo: 90 minutos
+
+═══════════════════════════════════════════════════════════════════════════════
+REQUERIMIENTOS DEL SISTEMA
+═══════════════════════════════════════════════════════════════════════════════
+
+PUNTO 1 (1.0): DISEÑO DE ESTRUCTURAS
+-------------------------------------
+a) Clase NODO (Usuario):
+   - Debe almacenar: nombre de usuario, lista de intereses
+   - Debe poder enlazarse con otro usuario
+
+b) Clase LISTA (RedSocial):
+   - Debe mantener referencia al inicio de la lista
+   - Los usuarios más recientes van al INICIO
+
+
+PUNTO 2 (1.0): VALIDAR NOMBRE - REGEX
+-------------------------------------
+Implementa un método que valide nombres de usuario con las siguientes reglas:
+- Deben empezar con una letra
+- Pueden contener letras, números y guiones bajos
+- Longitud mínima: 4 caracteres
+
+
+PUNTO 3 (1.0): AGREGAR USUARIO
+------------------------------
+Implementa un método para agregar un nuevo usuario válido.
+- La inserción debe ser al INICIO
+- Complejidad esperada: O(1)
+
+
+PUNTO 4 (1.0): BUSCAR USUARIO - RECURSIVO
+-----------------------------------------
+Implementa un método recursivo que retorne los intereses de un usuario
+dado su nombre. Si no existe, retorna None.
+
+
+PUNTO 5 (1.0): RECOMENDACIÓN DE AMIGOS - CONJUNTOS
+--------------------------------------------------
+Implementa un método que, dado un usuario, compare sus intereses con los
+de otros usuarios y recomiende amigos basados en la intersección de intereses.
+
+
+PUNTO 6 (1.25): FORMAS DE CONEXIÓN - RECURSIVO CON MEMO
+-------------------------------------------------------
+Implementa una función recursiva con memorización que calcule
+cuántas formas distintas hay de conectar n usuarios en pares de amistad.
+
+Ejemplo:
+    conexiones(3) → 3
+
+═══════════════════════════════════════════════════════════════════════════════
+ESCRIBE TU CÓDIGO AQUÍ ABAJO
+═══════════════════════════════════════════════════════════════════════════════
+"""
+
+import re
+
+# PUNTO 1a: Clase Nodo (Usuario)
+class Usuario:
+    def __init__(self, nombre, intereses):
+        self.nombre = nombre
+        self.intereses = set(intereses)
+        self.siguiente = None
+
+# PUNTO 1b: Clase Lista (RedSocial)
+class RedSocial:
+    def __init__(self):
+        self.cabeza = None
+        self.validos = set()
+        self.invalidos = set()
+
+    # PUNTO 2: Validar nombre con regex
+    def validar_nombre(self, nombre):
+        patron = r"^[A-Za-z]\w{3,}$"
+        return bool(re.match(patron, nombre))
+
+    # PUNTO 3: Agregar usuario
+    def agregar_usuario(self, nombre, intereses):
+        if self.validar_nombre(nombre):
+            nuevo = Usuario(nombre, intereses)
+            nuevo.siguiente = self.cabeza
+            self.cabeza = nuevo
+            self.validos.add(nombre)
+        else:
+            self.invalidos.add(nombre)
+
+    # PUNTO 4: Buscar usuario recursivo
+    def buscar_usuario(self, nodo, nombre):
+        if nodo is None:
+            return None
+        if nodo.nombre == nombre:
+            return nodo.intereses
+        return self.buscar_usuario(nodo.siguiente, nombre)
+
+    # PUNTO 5: Recomendación de amigos
+    def recomendar_amigos(self, nombre):
+        intereses_usuario = self.buscar_usuario(self.cabeza, nombre)
+        if intereses_usuario is None:
+            return []
+        recomendaciones = []
+        actual = self.cabeza
+        while actual:
+            if actual.nombre != nombre:
+                interseccion = intereses_usuario & actual.intereses
+                if interseccion:
+                    recomendaciones.append((actual.nombre, interseccion))
+            actual = actual.siguiente
+        return recomendaciones
+
+
+# PUNTO 6: Recursividad con memorización
+memo = {}
+def conexiones(n):
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return 1
+    memo[n] = (n-1) * conexiones(n-2) + conexiones(n-1)
+    return memo[n]
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA - NO MODIFICAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    red = RedSocial()
+    red.agregar_usuario("gabriel", ["python", "ajedrez", "musica"])
+    red.agregar_usuario("ana", ["musica", "arte"])
+    red.agregar_usuario("juan", ["python", "futbol"])
+    red.agregar_usuario("x1", ["cine"])  # inválido
+
+    print("\nIntereses de gabriel:", red.buscar_usuario(red.cabeza, "gabriel"))
+    print("\nRecomendaciones para gabriel:", red.recomendar_amigos("gabriel"))
+    print("\nConjuntos de usuarios válidos/ inválidos:")
+    print("Válidos:", red.validos)
+    print("Inválidos:", red.invalidos)
+    print("\nFormas de conectar 4 usuarios:", conexiones(4))
