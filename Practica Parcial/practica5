@@ -1,0 +1,244 @@
+EJERCICIO MASTER — “Sistema de monitoreo de usuarios”
+📌 Enunciado
+
+Se tiene un sistema que registra actividad de usuarios:
+
+User:juan IP:192.168.1.1 Action:login Time:10:00
+User:ana IP:10.0.0.5 Action:error Time:10:01
+User:juan IP:192.168.1.1 Action:upload Time:10:02
+User:carlos IP:172.16.0.3 Action:login Time:10:03
+User:ana IP:10.0.0.5 Action:error Time:10:04
+User:juan IP:192.168.1.1 Action:download Time:10:05
+🎯 Debes hacer:
+1️⃣ Regex
+
+Extraer:
+
+usuario
+IP
+acción
+hora
+2️⃣ Lista enlazada
+
+Guardar SOLO acciones válidas (login, upload, download)
+
+3️⃣ Diccionario (🔥 IMPORTANTE)
+
+Construir un diccionario:
+
+{
+  "juan": {"login": 1, "upload": 1, "download": 1},
+  "ana": {"error": 2},
+  "carlos": {"login": 1}
+}
+4️⃣ Conjuntos
+Usuarios únicos
+IPs únicas
+5️⃣ Recursividad
+Contar nodos en la lista enlazada
+Mostrar lista recursivamente
+6️⃣ Eliminar nodos (recursivo)
+
+Eliminar usuarios que tengan más de 1 "error"
+
+7️⃣ Memoización
+
+Calcular número de formas de procesar eventos:
+
+import re
+from functools import lru_cache
+
+# =========================
+# 1. Nodo
+# =========================
+class Nodo:
+    def __init__(self, user, ip, action, time):
+        self.user = user
+        self.ip = ip
+        self.action = action
+        self.time = time
+        self.siguiente = None
+
+
+# =========================
+# 2. Regex
+# =========================
+def parsear(linea):
+    patron = r"User:(\w+)\s+IP:(\d+\.\d+\.\d+\.\d+)\s+Action:(\w+)\s+Time:(\d{2}:\d{2})"
+    match = re.match(patron, linea)
+    
+    if match:
+        return match.groups()
+    return None
+
+
+# =========================
+# 3. Insertar al final
+# =========================
+def insertar_final(head, nodo):
+    if head is None:
+        return nodo
+    
+    actual = head
+    while actual.siguiente:
+        actual = actual.siguiente
+    
+    actual.siguiente = nodo
+    return head
+
+
+# =========================
+# 4. Procesar datos
+# =========================
+def procesar(logs):
+    head = None
+    usuarios = set()
+    ips = set()
+    acciones_dict = {}  # 🔥 clave del ejercicio
+
+    for linea in logs:
+        datos = parsear(linea)
+
+        if datos:
+            user, ip, action, time = datos
+
+            # conjuntos
+            usuarios.add(user)
+            ips.add(ip)
+
+            # diccionario
+            if user not in acciones_dict:
+                acciones_dict[user] = {}
+            
+            acciones_dict[user][action] = acciones_dict[user].get(action, 0) + 1
+
+            # lista enlazada (filtrar)
+            if action in ["login", "upload", "download"]:
+                nodo = Nodo(user, ip, action, time)
+                head = insertar_final(head, nodo)
+
+    return head, usuarios, ips, acciones_dict
+
+
+# =========================
+# 5. Recursividad
+# =========================
+def imprimir_lista(nodo):
+    if nodo is None:
+        return
+    
+    print(f"{nodo.user} - {nodo.action} ({nodo.time})")
+    imprimir_lista(nodo.siguiente)
+
+
+def contar_nodos(nodo):
+    if nodo is None:
+        return 0
+    return 1 + contar_nodos(nodo.siguiente)
+
+
+# =========================
+# 6. Eliminar usuarios con muchos errores
+# =========================
+def eliminar_usuarios(nodo, usuarios_invalidos):
+    if nodo is None:
+        return None
+    
+    if nodo.user in usuarios_invalidos:
+        return eliminar_usuarios(nodo.siguiente, usuarios_invalidos)
+    
+    nodo.siguiente = eliminar_usuarios(nodo.siguiente, usuarios_invalidos)
+    return nodo
+
+
+# =========================
+# 7. Memoización
+# =========================
+@lru_cache(maxsize=None)
+def formas(n):
+    if n <= 2:
+        return n
+    return formas(n-1) + formas(n-2)
+
+
+# =========================
+# 8. Main
+# =========================
+def main():
+    logs = [
+        "User:juan IP:192.168.1.1 Action:login Time:10:00",
+        "User:ana IP:10.0.0.5 Action:error Time:10:01",
+        "User:juan IP:192.168.1.1 Action:upload Time:10:02",
+        "User:carlos IP:172.16.0.3 Action:login Time:10:03",
+        "User:ana IP:10.0.0.5 Action:error Time:10:04",
+        "User:juan IP:192.168.1.1 Action:download Time:10:05"
+    ]
+
+    head, usuarios, ips, acciones = procesar(logs)
+
+    print("=== Lista enlazada ===")
+    imprimir_lista(head)
+
+    print("\nUsuarios:", usuarios)
+    print("IPs:", ips)
+
+    print("\n=== Diccionario de acciones ===")
+    print(acciones)
+
+    # detectar usuarios problemáticos
+    invalidos = {u for u, acc in acciones.items() if acc.get("error", 0) > 1}
+
+    print("\nUsuarios con muchos errores:", invalidos)
+
+    head = eliminar_usuarios(head, invalidos)
+
+    print("\n=== Lista filtrada ===")
+    imprimir_lista(head)
+
+    print("\nTotal nodos:", contar_nodos(head))
+
+    print("\nFormas de procesar:", formas(len(usuarios)))
+
+
+if __name__ == "__main__":
+    main()
+
+=========================================================================
+EXPLICACIÓN CLAVE: DICCIONARIOS (como te lo preguntan en parcial)
+📌 ¿Qué es un diccionario?
+
+Estructura clave → valor
+
+dic = {
+    "juan": 3,
+    "ana": 2
+}
+📌 Acceso
+dic["juan"]  # 3
+📌 Método clave (EL MÁS IMPORTANTE)
+dic.get("juan", 0)
+
+👉 Si no existe → devuelve 0
+👉 Evita errores
+
+📌 Contar ocurrencias (PATRÓN CLAVE)
+dic[key] = dic.get(key, 0) + 1
+
+💡 Esto es probablemente lo MÁS importante del parcial.
+
+📌 Diccionarios anidados (nivel pro)
+acciones[user][action] = acciones[user].get(action, 0) + 1
+
+👉 Esto crea estructuras tipo:
+
+{
+  "juan": {
+    "login": 2,
+    "upload": 1
+  }
+}
+📌 Iterar
+for user, acciones in dic.items():
+    print(user, acciones)
+📌 Con sets (🔥 muy común)
+{u for u, acc in dic.items() if acc.get("error", 0) > 1}
