@@ -1,0 +1,140 @@
+Ejercicio tipo parcial (integrador)
+
+Se tiene un archivo de texto con múltiples líneas que representan registros de usuarios:
+
+ID:123 Nombre:Juan Email:juan123@gmail.com
+ID:124 Nombre:Ana Email:ana@@gmail.com
+ID:125 Nombre:Carlos Email:carlos25@hotmail.com
+ID:126 Nombre:Juan Email:juan123@gmail.com
+📌 Problema
+
+Debes construir un programa en Python que:
+
+1️⃣ Use expresiones regulares
+Extraiga correctamente:
+ID
+Nombre
+Email
+Valide que el email sea correcto
+2️⃣ Use listas enlazadas
+Almacene los registros válidos en una lista enlazada
+3️⃣ Use conjuntos
+Elimine usuarios duplicados (mismo email)
+4️⃣ Use recursividad
+Recorra la lista enlazada de forma recursiva e imprima los datos
+5️⃣ Use memoización
+
+Cree una función recursiva que calcule:
+
+👉 Número de formas de agrupar usuarios en equipos de 1 o 2 personas
+(esto es tipo Fibonacci)
+
+
+import re
+from functools import lru_cache
+
+# =========================
+# 1. Definición de Nodo
+# =========================
+class Nodo:
+    def __init__(self, id, nombre, email):
+        self.id = id
+        self.nombre = nombre
+        self.email = email
+        self.siguiente = None
+
+
+# =========================
+# 2. Expresiones regulares
+# =========================
+def extraer_datos(linea):
+    patron = r"ID:(\d+)\s+Nombre:(\w+)\s+Email:(\S+@\S+\.\S+)"
+    match = re.match(patron, linea)
+    
+    if match:
+        return match.groups()  # (id, nombre, email)
+    return None
+
+
+# =========================
+# 3. Validación de email
+# =========================
+def email_valido(email):
+    patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.match(patron, email) is not None
+
+
+# =========================
+# 4. Insertar en lista enlazada
+# =========================
+def insertar_lista(head, id, nombre, email):
+    nuevo = Nodo(id, nombre, email)
+    nuevo.siguiente = head
+    return nuevo
+
+
+# =========================
+# 5. Construir lista enlazada
+# =========================
+def construir_lista(datos):
+    head = None
+    emails_vistos = set()
+
+    for linea in datos:
+        resultado = extraer_datos(linea)
+
+        if resultado:
+            id, nombre, email = resultado
+
+            if email_valido(email) and email not in emails_vistos:
+                emails_vistos.add(email)
+                head = insertar_lista(head, id, nombre, email)
+
+    return head, len(emails_vistos)
+
+
+# =========================
+# 6. Recorrer lista (recursivo)
+# =========================
+def imprimir_lista(nodo):
+    if nodo is None:
+        return
+    
+    print(f"ID: {nodo.id}, Nombre: {nodo.nombre}, Email: {nodo.email}")
+    imprimir_lista(nodo.siguiente)
+
+
+# =========================
+# 7. Recursividad + memoización
+# =========================
+@lru_cache(maxsize=None)
+def formas_agrupacion(n):
+    if n <= 2:
+        return n
+    return formas_agrupacion(n-1) + formas_agrupacion(n-2)
+
+
+# =========================
+# 8. Programa principal
+# =========================
+def main():
+    datos = [
+        "ID:123 Nombre:Juan Email:juan123@gmail.com",
+        "ID:124 Nombre:Ana Email:ana@@gmail.com",
+        "ID:125 Nombre:Carlos Email:carlos25@hotmail.com",
+        "ID:126 Nombre:Juan Email:juan123@gmail.com"
+    ]
+
+    head, cantidad = construir_lista(datos)
+
+    print("=== Usuarios válidos ===")
+    imprimir_lista(head)
+
+    print("\n=== Cálculo de agrupaciones ===")
+    print(f"Cantidad de usuarios únicos: {cantidad}")
+    print(f"Formas de agrupar: {formas_agrupacion(cantidad)}")
+
+
+# Ejecutar
+if __name__ == "__main__":
+    main()
