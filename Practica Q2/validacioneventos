@@ -1,0 +1,534 @@
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                        SIMULACRO - PARCIAL FINAL
+                Validación de Eventos + Sistema de Permisos
+═══════════════════════════════════════════════════════════════════════════════
+
+INSTRUCCIONES:
+--------------
+1. Completar las funciones donde dice TODO
+2. No modificar el código base proporcionado
+3. Usar estructuras adecuadas (sets y listas enlazadas)
+4. Se evalúa lógica, eficiencia y uso correcto de punteros
+
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 1: VALIDACIÓN DE EVENTOS (3.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Se tiene una matriz donde cada fila representa los eventos a los que asistió
+una persona.
+
+REGLAS:
+- Cada persona debe tener eventos del 1 al 9 sin repetir
+- Cada evento (columna) debe tener valores únicos del 1 al 9
+- Cada subcuadro 3x3 debe contener todos los eventos
+"""
+
+EVENTOS_VALIDOS = {1,2,3,4,5,6,7,8,9}
+
+MATRIZ = [
+    [1,2,3,4,5,6,7,8,9],
+    [2,3,4,5,6,7,8,9,1],
+    [3,4,5,6,7,8,9,1,2],
+    [4,5,6,7,8,9,1,2,3],
+    [5,6,7,8,9,1,2,3,4],
+    [6,7,8,9,1,2,3,4,5],
+    [7,8,9,1,2,3,4,5,6],
+    [8,9,1,2,3,4,5,6,7],
+    [9,1,2,3,4,5,6,7,8]
+]
+
+
+# PUNTO 1.1 (1.0): Validar persona (fila)
+def validar_persona(matriz, fila):
+    """
+    Retorna True si la fila contiene exactamente los números 1-9 sin repetir.
+    
+    Idea:
+    - Convertir la fila en set
+    - Comparar con EVENTOS_VALIDOS
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 1.2 (1.0): Validar evento (columna)
+def validar_evento(matriz, columna):
+    """
+    Retorna True si la columna contiene exactamente los números 1-9 sin repetir.
+    
+    Idea:
+    - Recorrer la matriz
+    - Construir un set con los valores de la columna
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 1.3 (1.5): Validar zona 3x3
+def validar_zona(matriz, fila_inicio, col_inicio):
+    """
+    Retorna True si el subcuadro 3x3 contiene todos los números 1-9.
+    
+    fila_inicio y col_inicio pueden ser: 0, 3 o 6
+    
+    Idea:
+    - Recorrer submatriz 3x3
+    - Guardar en set
+    - Comparar con EVENTOS_VALIDOS
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 1.4 (NUEVO): Validación completa
+def sistema_valido(matriz):
+    """
+    Retorna True si TODO el sistema es válido.
+    
+    Debe validar:
+    - Todas las filas
+    - Todas las columnas
+    - Todos los subcuadros
+    
+    Idea:
+    - Usar las funciones anteriores
+    """
+    # TODO: Implementar
+    pass
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 2: SISTEMA DE PERMISOS (2.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Sistema de roles implementado con listas enlazadas.
+Cada conjunto representa permisos de un usuario.
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO BASE - NO MODIFICAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    def __init__(self):
+        self.cabeza = None
+
+    def pertenece(self, x):
+        """
+        Retorna True si x está en el conjunto.
+        """
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        """
+        Agrega x al conjunto si no existe.
+        """
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FUNCIONES A IMPLEMENTAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# PUNTO 2.1 (0.5): Unión
+def union(A, B):
+    """
+    Retorna un nuevo conjunto con todos los elementos de A y B sin repetir.
+    
+    Idea:
+    - Recorrer A y agregar
+    - Recorrer B y agregar
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.2 (0.5): Intersección
+def interseccion(A, B):
+    """
+    Retorna un conjunto con los elementos comunes entre A y B.
+    
+    Idea:
+    - Recorrer A
+    - Si elemento pertenece a B, agregar
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.3 (0.5): Diferencia
+def diferencia(A, B):
+    """
+    Retorna un conjunto con los elementos de A que NO están en B.
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.4 (0.5): Diferencia simétrica
+def diferencia_simetrica(A, B):
+    """
+    Retorna elementos que están en A o B pero no en ambos.
+    
+    Idea:
+    - (A - B) ∪ (B - A)
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.5 (0.5): Al menos un permiso
+def tiene_algun_permiso(usuario, permisos):
+    """
+    Retorna True si el usuario tiene AL MENOS uno de los permisos.
+    
+    Idea:
+    - Recorrer permisos
+    - Si alguno pertenece → True
+    """
+    # TODO: Implementar
+    pass
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BONUS (difícil)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def son_iguales(A, B):
+    """
+    Retorna True si ambos conjuntos son iguales.
+    
+    Idea:
+    - A ⊆ B y B ⊆ A
+    - (usar pertenece manualmente)
+    """
+    # TODO: Implementar
+    pass
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRUEBAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+
+    print("=" * 60)
+    print("PARTE 1: VALIDACIÓN DE EVENTOS")
+    print("=" * 60)
+
+    print("\nValidando filas:")
+    for i in range(9):
+        print(f"Fila {i+1}: {validar_persona(MATRIZ, i)}")
+
+    print("\nValidando columnas:")
+    for j in range(9):
+        print(f"Columna {j+1}: {validar_evento(MATRIZ, j)}")
+
+    print("\nValidando zonas:")
+    for fi in [0,3,6]:
+        for ci in [0,3,6]:
+            print(f"Zona ({fi},{ci}): {validar_zona(MATRIZ, fi, ci)}")
+
+    print("\nSistema completo:", sistema_valido(MATRIZ))
+
+    print("\n" + "=" * 60)
+    print("PARTE 2: SISTEMA DE PERMISOS")
+    print("=" * 60)
+
+    A = Conjunto()
+    A.agregar("leer")
+    A.agregar("escribir")
+
+    B = Conjunto()
+    B.agregar("escribir")
+    B.agregar("admin")
+
+    print("\nA:", A)
+    print("B:", B)
+
+    print("\nUnion:", union(A, B))
+    print("Interseccion:", interseccion(A, B))
+    print("Diferencia A-B:", diferencia(A, B))
+    print("Dif simetrica:", diferencia_simetrica(A, B))
+
+    permisos = Conjunto()
+    permisos.agregar("admin")
+
+    print("\nTiene algun permiso:", tiene_algun_permiso(A, permisos))
+
+
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                        SIMULACRO - PARCIAL FINAL (RESUELTO)
+═══════════════════════════════════════════════════════════════════════════════
+"""
+
+EVENTOS_VALIDOS = {1,2,3,4,5,6,7,8,9}
+
+MATRIZ = [
+    [1,2,3,4,5,6,7,8,9],
+    [2,3,4,5,6,7,8,9,1],
+    [3,4,5,6,7,8,9,1,2],
+    [4,5,6,7,8,9,1,2,3],
+    [5,6,7,8,9,1,2,3,4],
+    [6,7,8,9,1,2,3,4,5],
+    [7,8,9,1,2,3,4,5,6],
+    [8,9,1,2,3,4,5,6,7],
+    [9,1,2,3,4,5,6,7,8]
+]
+
+
+# ==============================
+# PARTE 1: MATRICES + SETS
+# ==============================
+
+def validar_persona(matriz, fila):
+    """
+    Verifica si una fila contiene exactamente los valores 1-9 sin repetir.
+    """
+    return set(matriz[fila]) == EVENTOS_VALIDOS
+
+
+def validar_evento(matriz, columna):
+    """
+    Verifica si una columna contiene exactamente los valores 1-9.
+    """
+    valores = set()
+    for i in range(9):
+        valores.add(matriz[i][columna])
+    return valores == EVENTOS_VALIDOS
+
+
+def validar_zona(matriz, fila_inicio, col_inicio):
+    """
+    Verifica si un subcuadro 3x3 contiene los valores 1-9.
+    """
+    valores = set()
+    for i in range(3):
+        for j in range(3):
+            valores.add(matriz[fila_inicio + i][col_inicio + j])
+    return valores == EVENTOS_VALIDOS
+
+
+def sistema_valido(matriz):
+    """
+    Verifica todo el sistema:
+    - filas
+    - columnas
+    - zonas 3x3
+    """
+    # Validar filas
+    for i in range(9):
+        if not validar_persona(matriz, i):
+            return False
+
+    # Validar columnas
+    for j in range(9):
+        if not validar_evento(matriz, j):
+            return False
+
+    # Validar zonas
+    for fi in [0,3,6]:
+        for ci in [0,3,6]:
+            if not validar_zona(matriz, fi, ci):
+                return False
+
+    return True
+
+
+# ==============================
+# PARTE 2: LISTAS ENLAZADAS
+# ==============================
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    def __init__(self):
+        self.cabeza = None
+
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+
+# ==============================
+# FUNCIONES DE CONJUNTOS
+# ==============================
+
+def union(A, B):
+    """
+    Retorna un nuevo conjunto con elementos de A y B.
+    """
+    nuevo = Conjunto()
+
+    actual = A.cabeza
+    while actual:
+        nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    actual = B.cabeza
+    while actual:
+        nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def interseccion(A, B):
+    """
+    Elementos comunes entre A y B.
+    """
+    nuevo = Conjunto()
+
+    actual = A.cabeza
+    while actual:
+        if B.pertenece(actual.dato):
+            nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def diferencia(A, B):
+    """
+    Elementos de A que no están en B.
+    """
+    nuevo = Conjunto()
+
+    actual = A.cabeza
+    while actual:
+        if not B.pertenece(actual.dato):
+            nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def diferencia_simetrica(A, B):
+    """
+    Elementos que están en A o B pero no en ambos.
+    """
+    return union(diferencia(A, B), diferencia(B, A))
+
+
+def tiene_algun_permiso(usuario, permisos):
+    """
+    Retorna True si el usuario tiene al menos uno de los permisos.
+    """
+    actual = permisos.cabeza
+    while actual:
+        if usuario.pertenece(actual.dato):
+            return True
+        actual = actual.siguiente
+    return False
+
+
+# ==============================
+# BONUS
+# ==============================
+
+def son_iguales(A, B):
+    """
+    Verifica si dos conjuntos son iguales.
+    """
+    actual = A.cabeza
+    while actual:
+        if not B.pertenece(actual.dato):
+            return False
+        actual = actual.siguiente
+
+    actual = B.cabeza
+    while actual:
+        if not A.pertenece(actual.dato):
+            return False
+        actual = actual.siguiente
+
+    return True
+
+
+# ==============================
+# PRUEBAS
+# ==============================
+
+if __name__ == "__main__":
+
+    print("Sistema válido:", sistema_valido(MATRIZ))
+
+    A = Conjunto()
+    A.agregar("leer")
+    A.agregar("escribir")
+
+    B = Conjunto()
+    B.agregar("escribir")
+    B.agregar("admin")
+
+    print("\nA:", A)
+    print("B:", B)
+
+    print("Union:", union(A, B))
+    print("Interseccion:", interseccion(A, B))
+    print("Diferencia A-B:", diferencia(A, B))
+    print("Dif simetrica:", diferencia_simetrica(A, B))
+
+    permisos = Conjunto()
+    permisos.agregar("admin")
+
+    print("Tiene algun permiso:", tiene_algun_permiso(A, permisos))
+    print("Son iguales:", son_iguales(A, B))
+
+
+
+
+
+
