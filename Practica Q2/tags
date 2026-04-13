@@ -1,0 +1,202 @@
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                        PARCIAL - CONJUNTOS Y LISTAS
+                  Análisis de Cursos + Sistema de Tags
+═══════════════════════════════════════════════════════════════════════════════
+
+INSTRUCCIONES:
+--------------
+1. Completar las funciones donde dice TODO
+2. No modificar el código base proporcionado
+3. Usar estructuras adecuadas (sets y listas enlazadas)
+
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 1: ANÁLISIS DE CURSOS (3.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Se tiene una matriz donde cada fila representa los cursos que tomó un estudiante.
+
+REGLAS:
+- Cada estudiante debe haber tomado cursos del 1 al 9 sin repetir
+- Cada curso debe aparecer correctamente en cada columna
+- Cada bloque 3x3 debe contener todos los cursos
+"""
+
+CURSOS_VALIDOS = {1,2,3,4,5,6,7,8,9}
+
+MATRIZ = [
+    [1,2,3,4,5,6,7,8,9],
+    [2,3,4,5,6,7,8,9,1],
+    [3,4,5,6,7,8,9,1,2],
+    [4,5,6,7,8,9,1,2,3],
+    [5,6,7,8,9,1,2,3,4],
+    [6,7,8,9,1,2,3,4,5],
+    [7,8,9,1,2,3,4,5,6],
+    [8,9,1,2,3,4,5,6,7],
+    [9,1,2,3,4,5,6,7,8]
+]
+
+
+# PUNTO 1.1 (1.0): Validar estudiante (fila)
+def validar_estudiante(matriz, fila):
+    """
+    Retorna True si la fila contiene exactamente los cursos 1-9 sin repetir.
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 1.2 (1.0): Validar curso (columna)
+def validar_curso(matriz, columna):
+    """
+    Retorna True si la columna contiene exactamente los cursos 1-9 sin repetir.
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 1.3 (1.5): Validar grupo 3x3
+def validar_grupo(matriz, fila_inicio, col_inicio):
+    """
+    Retorna True si el subcuadro 3x3 contiene todos los cursos.
+    """
+    # TODO: Implementar
+    pass
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 2: SISTEMA DE TAGS (2.0)
+═══════════════════════════════════════════════════════════════════════════════
+
+Se implementa un sistema de etiquetas usando listas enlazadas.
+Cada conjunto representa etiquetas de una publicación.
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO BASE - NO MODIFICAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    def __init__(self, elementos=None):
+        self.cabeza = None
+        if elementos:
+            for e in elementos:
+                self.agregar(e)
+
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PUNTOS A IMPLEMENTAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# PUNTO 2.1 (1.0): Unión
+def union(conjunto_a, conjunto_b):
+    """
+    Retorna un nuevo conjunto con todos los elementos de A y B sin repetir.
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.2 (0.5): Intersección
+def interseccion(conjunto_a, conjunto_b):
+    """
+    Retorna un conjunto con los elementos comunes entre A y B.
+    """
+    # TODO: Implementar
+    pass
+
+
+# PUNTO 2.3 (0.5): Diferencia
+def diferencia(conjunto_a, conjunto_b):
+    """
+    Retorna un conjunto con los elementos de A que NO están en B.
+    """
+    # TODO: Implementar
+    pass
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BONUS (difícil)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def tiene_duplicados(conjunto):
+    """
+    Retorna True si hay elementos duplicados en la estructura.
+
+    ❗ No usar pertenece
+    ❗ Solo usar punteros
+    """
+    # TODO: Implementar
+    pass
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+
+    print("=" * 60)
+    print("PARTE 1: VALIDACIÓN DE CURSOS")
+    print("=" * 60)
+
+    # Validar filas
+    print("\n📋 Validando estudiantes:")
+    for i in range(9):
+        print(f"  Estudiante {i+1}: {validar_estudiante(MATRIZ, i)}")
+
+    # Validar columnas
+    print("\n📋 Validando cursos:")
+    for j in range(9):
+        print(f"  Curso {j+1}: {validar_curso(MATRIZ, j)}")
+
+    # Validar grupos
+    print("\n📋 Validando grupos 3x3:")
+    for fi in [0,3,6]:
+        for ci in [0,3,6]:
+            print(f"  Grupo ({fi},{ci}): {validar_grupo(MATRIZ, fi, ci)}")
+
+    print("\n" + "=" * 60)
+    print("PARTE 2: SISTEMA DE TAGS")
+    print("=" * 60)
+
+    A = Conjunto(["python", "ia", "datos"])
+    B = Conjunto(["ia", "ml", "bigdata"])
+
+    print("\nConjunto A:", A)
+    print("Conjunto B:", B)
+
+    print("\nUnión:", union(A, B))
+    print("Intersección:", interseccion(A, B))
+    print("Diferencia A-B:", diferencia(A, B))
