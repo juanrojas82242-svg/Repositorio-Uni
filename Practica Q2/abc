@@ -1,0 +1,207 @@
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARCIAL FINAL - RESUELTO COMPLETO
+═══════════════════════════════════════════════════════════════════════════════
+"""
+
+# ==============================
+# PARTE 1: STRINGS + SETS
+# ==============================
+
+USUARIOS = {
+    "juan": ["Python", " IA", "datos", "python"],
+    "ana": ["ia", "ML", "datos"],
+    "luis": ["web", "javascript", "CSS"],
+    "maria": ["python", "ml", "ia"]
+}
+
+
+def normalizar_lista(lista):
+    """
+    Normaliza strings:
+    - minúsculas
+    - elimina espacios
+    """
+    return [elem.strip().lower() for elem in lista]
+
+
+def intereses_unicos(usuario):
+    """
+    Retorna intereses únicos normalizados.
+    """
+    lista = normalizar_lista(USUARIOS[usuario])
+    return set(lista)
+
+
+def intereses_comunes(u1, u2):
+    """
+    Intersección de intereses.
+    """
+    return intereses_unicos(u1) & intereses_unicos(u2)
+
+
+def diferencia_intereses(u1, u2):
+    """
+    Intereses que tiene u1 pero no u2.
+    """
+    return intereses_unicos(u1) - intereses_unicos(u2)
+
+
+def similitud(u1, u2):
+    """
+    Cantidad de intereses en común.
+    """
+    return len(intereses_comunes(u1, u2))
+
+
+def filtrar_por_prefijo(usuario, prefijo):
+    """
+    Filtra intereses que comienzan con cierto prefijo.
+    """
+    lista = normalizar_lista(USUARIOS[usuario])
+    prefijo = prefijo.lower().strip()
+    return [elem for elem in lista if elem.startswith(prefijo)]
+
+
+# ==============================
+# PARTE 2: LISTAS ENLAZADAS
+# ==============================
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    def __init__(self):
+        self.cabeza = None
+
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(actual.dato)
+            actual = actual.siguiente
+        return str(elementos)
+
+
+def lista_a_conjunto(lista):
+    """
+    Convierte lista a conjunto enlazado normalizado.
+    """
+    conjunto = Conjunto()
+    for elem in lista:
+        limpio = elem.strip().lower()
+        conjunto.agregar(limpio)
+    return conjunto
+
+
+def interseccion(A, B):
+    """
+    Elementos comunes entre A y B.
+    """
+    nuevo = Conjunto()
+    actual = A.cabeza
+
+    while actual:
+        if B.pertenece(actual.dato):
+            nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def diferencia(A, B):
+    """
+    Elementos en A pero no en B.
+    """
+    nuevo = Conjunto()
+    actual = A.cabeza
+
+    while actual:
+        if not B.pertenece(actual.dato):
+            nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def tiene_todos(A, B):
+    """
+    Verifica si B ⊆ A
+    """
+    actual = B.cabeza
+
+    while actual:
+        if not A.pertenece(actual.dato):
+            return False
+        actual = actual.siguiente
+
+    return True
+
+
+def tiene_alguno(A, B):
+    """
+    Verifica si hay al menos un elemento en común.
+    """
+    actual = B.cabeza
+
+    while actual:
+        if A.pertenece(actual.dato):
+            return True
+        actual = actual.siguiente
+
+    return False
+
+
+# ==============================
+# BONUS
+# ==============================
+
+def sugerir_amigos(u1, u2):
+    """
+    True si tienen al menos 2 intereses en común.
+    """
+    return similitud(u1, u2) >= 2
+
+
+# ==============================
+# PRUEBAS
+# ==============================
+
+if __name__ == "__main__":
+
+    print("Intereses únicos Juan:", intereses_unicos("juan"))
+    print("Comunes Juan-Ana:", intereses_comunes("juan", "ana"))
+    print("Diferencia Juan-Ana:", diferencia_intereses("juan", "ana"))
+    print("Similitud:", similitud("juan", "ana"))
+    print("Prefijo 'p':", filtrar_por_prefijo("juan", "p"))
+
+    A = lista_a_conjunto(USUARIOS["juan"])
+    B = lista_a_conjunto(USUARIOS["ana"])
+
+    print("\nA:", A)
+    print("B:", B)
+
+    print("Intersección:", interseccion(A, B))
+    print("Diferencia:", diferencia(A, B))
+    print("Tiene todos:", tiene_todos(A, B))
+    print("Tiene alguno:", tiene_alguno(A, B))
+
+    print("\n¿Sugerir amistad?:", sugerir_amigos("juan", "ana"))
