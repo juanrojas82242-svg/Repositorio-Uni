@@ -1,0 +1,218 @@
+import re
+
+# ==============================
+# 1. REGEX (20%)
+# ==============================
+
+def validar_placa_vehiculo(placa):
+    """
+    Formato:
+    - ABC123
+    - ABC-123
+    """
+    patron = r'^[A-Z]{3}-?\d{3}$'
+    return bool(re.match(patron, placa))
+
+
+def extraer_hashtags(texto):
+    """
+    Extrae hashtags válidos.
+    """
+    patron = r'#\w+'
+    return re.findall(patron, texto)
+
+
+# ==============================
+# 2. LISTA ENLAZADA (30%)
+# ==============================
+
+class Pedido:
+    def __init__(self, cliente, direccion, valor, entregado=False):
+        self.cliente = cliente
+        self.direccion = direccion
+        self.valor = valor
+        self.entregado = entregado
+        self.siguiente = None
+
+    def __str__(self):
+        estado = "✓" if self.entregado else "○"
+        return f"[{estado}] {self.cliente} - ${self.valor:,} - {self.direccion}"
+
+
+class ListaPedidos:
+    def __init__(self):
+        self.cabeza = None
+
+    def mostrar(self):
+        actual = self.cabeza
+        if actual is None:
+            print("  Sin pedidos")
+            return
+        while actual:
+            print(f"  {actual}")
+            actual = actual.siguiente
+
+    def agregar(self, cliente, direccion, valor):
+        """
+        Agrega al FINAL usando recursividad
+        """
+        nuevo = Pedido(cliente, direccion, valor)
+
+        def agregar_rec(nodo):
+            if nodo.siguiente is None:
+                nodo.siguiente = nuevo
+            else:
+                agregar_rec(nodo.siguiente)
+
+        if self.cabeza is None:
+            self.cabeza = nuevo
+        else:
+            agregar_rec(self.cabeza)
+
+    def valor_pendiente(self):
+        """
+        Suma valores NO entregados (recursivo)
+        """
+        def suma_rec(nodo):
+            if nodo is None:
+                return 0
+
+            if nodo.entregado:
+                return suma_rec(nodo.siguiente)
+            else:
+                return nodo.valor + suma_rec(nodo.siguiente)
+
+        return suma_rec(self.cabeza)
+
+    def eliminar_entregados(self):
+        """
+        Elimina pedidos entregados (recursivo)
+        """
+
+        def eliminar_rec(nodo):
+            if nodo is None:
+                return None
+
+            # Primero procesamos el resto
+            nodo.siguiente = eliminar_rec(nodo.siguiente)
+
+            # Luego decidimos si este nodo se queda
+            if nodo.entregado:
+                return nodo.siguiente  # lo eliminamos
+            else:
+                return nodo
+
+        self.cabeza = eliminar_rec(self.cabeza)
+
+
+# ==============================
+# 3. CONJUNTOS (20%)
+# ==============================
+
+club_ciencias = {"Ana", "Carlos", "Diana", "Elena", "Felipe"}
+club_deportes = {"Carlos", "Felipe", "Gabriel", "Hugo", "Isabel"}
+club_arte = {"Ana", "Diana", "Gabriel", "Julia", "Karen"}
+
+
+def estudiantes_en_todos():
+    """
+    Intersección de los 3
+    """
+    return club_ciencias & club_deportes & club_arte
+
+
+def solo_un_club():
+    """
+    Exactamente en uno
+    """
+    solo_ciencias = club_ciencias - club_deportes - club_arte
+    solo_deportes = club_deportes - club_ciencias - club_arte
+    solo_arte = club_arte - club_ciencias - club_deportes
+
+    return solo_ciencias | solo_deportes | solo_arte
+
+
+def clubes_de_estudiante(nombre):
+    """
+    Retorna lista de clubes
+    """
+    clubes = []
+
+    if nombre in club_ciencias:
+        clubes.append("Ciencias")
+
+    if nombre in club_deportes:
+        clubes.append("Deportes")
+
+    if nombre in club_arte:
+        clubes.append("Arte")
+
+    return clubes
+
+
+# ==============================
+# 4. RECURSIVIDAD (30%)
+# ==============================
+
+def escalones_sin_memo(n):
+    """
+    Recursividad pura (tipo Fibonacci)
+    """
+    if n == 0:
+        return 1
+    if n == 1:
+        return 1
+
+    return escalones_sin_memo(n-1) + escalones_sin_memo(n-2)
+
+
+def escalones_con_memo(n, memo=None):
+    """
+    Con memorización
+    """
+    if memo is None:
+        memo = {}
+
+    if n in memo:
+        return memo[n]
+
+    if n == 0:
+        return 1
+    if n == 1:
+        return 1
+
+    memo[n] = escalones_con_memo(n-1, memo) + escalones_con_memo(n-2, memo)
+    return memo[n]
+
+
+# ==============================
+# PRUEBAS
+# ==============================
+
+if __name__ == "__main__":
+
+    print("Placa válida:", validar_placa_vehiculo("ABC-123"))
+    print("Hashtags:", extraer_hashtags("Hola #python es #genial #100dias"))
+
+    lista = ListaPedidos()
+    lista.agregar("Juan", "Calle 1", 20000)
+    lista.agregar("Ana", "Calle 2", 30000)
+    lista.agregar("Luis", "Calle 3", 15000)
+
+    lista.cabeza.entregado = True  # marcar uno entregado
+
+    print("\nPedidos:")
+    lista.mostrar()
+
+    print("\nValor pendiente:", lista.valor_pendiente())
+
+    lista.eliminar_entregados()
+    print("\nDespués de eliminar entregados:")
+    lista.mostrar()
+
+    print("\nEn todos:", estudiantes_en_todos())
+    print("Solo uno:", solo_un_club())
+    print("Clubes de Carlos:", clubes_de_estudiante("Carlos"))
+
+    print("\nEscalones sin memo (5):", escalones_sin_memo(5))
+    print("Escalones con memo (10):", escalones_con_memo(10))
