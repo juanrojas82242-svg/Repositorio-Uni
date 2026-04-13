@@ -1,0 +1,409 @@
+"""
+═══════════════════════════════════════════════════════════════════════════════
+            PARCIAL RESUELTO - STRINGS + LISTAS ENLAZADAS
+═══════════════════════════════════════════════════════════════════════════════
+"""
+
+# ==============================
+# PARTE 1: STRINGS + SETS
+# ==============================
+
+USUARIOS = {
+    "juan": ["python", "ia", "datos", "python"],
+    "ana": ["ia", "ml", "datos"],
+    "luis": ["web", "javascript", "css"],
+    "maria": ["python", "ml", "ia"]
+}
+
+
+def intereses_unicos(usuario):
+    """
+    Retorna los intereses únicos de un usuario.
+
+    Idea:
+    - Convertir la lista a set elimina duplicados automáticamente
+    """
+    return set(USUARIOS[usuario])
+
+
+def intereses_comunes(user1, user2):
+    """
+    Retorna los intereses en común entre dos usuarios.
+
+    Idea:
+    - Convertir ambos a set
+    - Usar intersección (&)
+    """
+    set1 = set(USUARIOS[user1])
+    set2 = set(USUARIOS[user2])
+    return set1 & set2
+
+
+def recomendar_intereses(user1, user2):
+    """
+    Retorna intereses que tiene user2 pero no user1.
+
+    Idea:
+    - Diferencia de conjuntos
+    """
+    set1 = set(USUARIOS[user1])
+    set2 = set(USUARIOS[user2])
+    return set2 - set1
+
+
+# ==============================
+# PARTE 2: LISTAS ENLAZADAS
+# ==============================
+
+class Nodo:
+    """
+    Nodo de la lista enlazada.
+    """
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    """
+    Implementación de conjunto usando lista enlazada.
+    No permite duplicados.
+    """
+    def __init__(self):
+        self.cabeza = None
+
+    def pertenece(self, x):
+        """
+        Verifica si x está en el conjunto.
+        """
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        """
+        Agrega x si no existe.
+        """
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(actual.dato)
+            actual = actual.siguiente
+        return str(elementos)
+
+
+# ==============================
+# FUNCIONES SOBRE CONJUNTOS
+# ==============================
+
+def lista_a_conjunto(lista_strings):
+    """
+    Convierte una lista de strings en un conjunto enlazado.
+
+    Idea:
+    - Recorrer lista
+    - Agregar cada elemento (sin duplicados)
+    """
+    conjunto = Conjunto()
+
+    for elemento in lista_strings:
+        conjunto.agregar(elemento)
+
+    return conjunto
+
+
+def interseccion(A, B):
+    """
+    Retorna elementos comunes entre A y B.
+
+    Idea:
+    - Recorrer A
+    - Si está en B → agregar
+    """
+    nuevo = Conjunto()
+
+    actual = A.cabeza
+    while actual:
+        if B.pertenece(actual.dato):
+            nuevo.agregar(actual.dato)
+        actual = actual.siguiente
+
+    return nuevo
+
+
+def tiene_todos(usuario, requeridos):
+    """
+    Retorna True si usuario tiene TODOS los permisos.
+
+    Idea:
+    - Recorrer requeridos
+    - Si falta uno → False
+    """
+    actual = requeridos.cabeza
+
+    while actual:
+        if not usuario.pertenece(actual.dato):
+            return False
+        actual = actual.siguiente
+
+    return True
+
+
+def tiene_alguno(usuario, requeridos):
+    """
+    Retorna True si usuario tiene AL MENOS uno.
+
+    Idea:
+    - Recorrer requeridos
+    - Si encuentra uno → True
+    """
+    actual = requeridos.cabeza
+
+    while actual:
+        if usuario.pertenece(actual.dato):
+            return True
+        actual = actual.siguiente
+
+    return False
+
+
+# ==============================
+# BONUS
+# ==============================
+
+def sugerir_amigos(user1, user2):
+    """
+    Sugiere amistad si tienen al menos 2 intereses en común.
+
+    Idea:
+    - Calcular intersección
+    - Verificar tamaño
+    """
+    comunes = intereses_comunes(user1, user2)
+    return len(comunes) >= 2
+
+
+# ==============================
+# PRUEBAS
+# ==============================
+
+if __name__ == "__main__":
+
+    print("Intereses únicos de Juan:", intereses_unicos("juan"))
+    print("Intereses comunes Juan-Ana:", intereses_comunes("juan", "ana"))
+    print("Recomendaciones para Juan desde Ana:", recomendar_intereses("juan", "ana"))
+
+    # Convertir listas a conjuntos enlazados
+    A = lista_a_conjunto(USUARIOS["juan"])
+    B = lista_a_conjunto(USUARIOS["ana"])
+
+    print("\nConjunto A:", A)
+    print("Conjunto B:", B)
+
+    print("Intersección:", interseccion(A, B))
+
+    print("Tiene todos:", tiene_todos(A, B))
+    print("Tiene alguno:", tiene_alguno(A, B))
+
+    print("\n¿Sugerir amistad Juan-Ana?:", sugerir_amigos("juan", "ana"))
+
+
+
+
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                    PARCIAL - STRINGS + LISTAS ENLAZADAS
+                Sistema de Usuarios + Intereses + Permisos
+═══════════════════════════════════════════════════════════════════════════════
+
+INSTRUCCIONES:
+--------------
+1. Completar las funciones donde dice TODO
+2. No modificar el código base
+3. Usar sets para strings y listas enlazadas para conjuntos
+4. Se evalúa lógica, claridad y manejo de estructuras
+
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 1: ANÁLISIS DE INTERESES (3.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Cada usuario tiene una lista de intereses (strings).
+"""
+
+USUARIOS = {
+    "juan": ["python", "ia", "datos", "python"],
+    "ana": ["ia", "ml", "datos"],
+    "luis": ["web", "javascript", "css"],
+    "maria": ["python", "ml", "ia"]
+}
+
+
+# PUNTO 1.1 (1.0): Intereses únicos
+def intereses_unicos(usuario):
+    """
+    Retorna un set con los intereses únicos del usuario.
+    
+    Ejemplo:
+    juan -> {"python", "ia", "datos"}
+    """
+    # TODO
+    pass
+
+
+# PUNTO 1.2 (1.0): Intereses en común
+def intereses_comunes(user1, user2):
+    """
+    Retorna un set con los intereses en común entre dos usuarios.
+    """
+    # TODO
+    pass
+
+
+# PUNTO 1.3 (1.5): Recomendación de intereses
+def recomendar_intereses(user1, user2):
+    """
+    Retorna intereses que tiene user2 pero NO user1.
+    
+    (sirve como recomendación)
+    """
+    # TODO
+    pass
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                    PARTE 2: SISTEMA DE PERMISOS (2.5)
+═══════════════════════════════════════════════════════════════════════════════
+
+Se implementa un conjunto de permisos usando listas enlazadas.
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO BASE (NO MODIFICAR)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+
+class Conjunto:
+    def __init__(self):
+        self.cabeza = None
+
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def agregar(self, x):
+        if self.pertenece(x):
+            return
+        nuevo = Nodo(x)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(actual.dato)
+            actual = actual.siguiente
+        return str(elementos)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FUNCIONES A IMPLEMENTAR
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# PUNTO 2.1 (1.0): Convertir intereses a conjunto enlazado
+def lista_a_conjunto(lista_strings):
+    """
+    Convierte una lista de strings en un Conjunto (lista enlazada)
+    sin duplicados.
+    """
+    # TODO
+    pass
+
+
+# PUNTO 2.2 (0.5): Intersección de conjuntos enlazados
+def interseccion(A, B):
+    """
+    Retorna un nuevo conjunto con elementos comunes.
+    """
+    # TODO
+    pass
+
+
+# PUNTO 2.3 (0.5): Verificar todos los permisos
+def tiene_todos(usuario, requeridos):
+    """
+    Retorna True si el usuario tiene TODOS los permisos.
+    """
+    # TODO
+    pass
+
+
+# PUNTO 2.4 (0.5): Verificar al menos uno
+def tiene_alguno(usuario, requeridos):
+    """
+    Retorna True si el usuario tiene AL MENOS uno.
+    """
+    # TODO
+    pass
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                                BONUS (difícil)
+═══════════════════════════════════════════════════════════════════════════════
+"""
+
+def sugerir_amigos(user1, user2):
+    """
+    Sugiere amigos basándose en intereses en común.
+    
+    Retorna True si tienen al menos 2 intereses en común.
+    """
+    # TODO
+    pass
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRUEBAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+
+    print("Intereses únicos de Juan:", intereses_unicos("juan"))
+    print("Intereses comunes Juan-Ana:", intereses_comunes("juan", "ana"))
+    print("Recomendaciones para Juan desde Ana:", recomendar_intereses("juan", "ana"))
+
+    # Convertir a conjuntos enlazados
+    A = lista_a_conjunto(USUARIOS["juan"])
+    B = lista_a_conjunto(USUARIOS["ana"])
+
+    print("\nConjunto A:", A)
+    print("Conjunto B:", B)
+
+    print("Intersección:", interseccion(A, B))
+
+    print("Tiene todos:", tiene_todos(A, B))
+    print("Tiene alguno:", tiene_alguno(A, B))
