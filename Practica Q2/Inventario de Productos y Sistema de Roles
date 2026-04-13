@@ -1,0 +1,135 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        REPASO - CONJUNTOS
+                Inventario de Productos + Sistema de Roles
+═══════════════════════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 1: INVENTARIO DE PRODUCTOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Usar conjuntos de Python para validar un inventario de productos.
+
+REGLAS:
+- No debe haber códigos de producto repetidos
+- Todos los códigos deben estar en el rango 100-109
+- Validar que dos bodegas no tengan productos en común
+"""
+
+CODIGOS_VALIDOS = {100,101,102,103,104,105,106,107,108,109}
+
+bodega_a = [100,101,102,103,104]
+bodega_b = [105,106,107,108,109]
+
+# PUNTO 1.1: Validar unicidad en una bodega
+def validar_unicidad(bodega):
+    """
+    Retorna True si no hay códigos repetidos y todos están en CODIGOS_VALIDOS
+    """
+    return set(bodega).issubset(CODIGOS_VALIDOS) and len(set(bodega)) == len(bodega)
+
+# PUNTO 1.2: Validar que dos bodegas no tengan productos en común
+def validar_disjuntas(bodega1, bodega2):
+    """
+    Retorna True si no hay productos en común entre las dos bodegas
+    """
+    return set(bodega1).isdisjoint(set(bodega2))
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 2: SISTEMA DE ROLES CON LISTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Implementar operaciones de conjuntos usando la clase Conjunto con listas enlazadas.
+
+CONTEXTO:
+Un sistema tiene roles con diferentes permisos. Debes implementar unión e intersección
+para comparar roles.
+"""
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+class Conjunto:
+    def __init__(self, elementos=None):
+        self.cabeza = None
+        if elementos:
+            for e in elementos:
+                self.agregar(e)
+    
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+    
+    def agregar(self, x):
+        if not self.pertenece(x):
+            nuevo = Nodo(x)
+            nuevo.siguiente = self.cabeza
+            self.cabeza = nuevo
+    
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+# PUNTO 2.1: Unión de dos conjuntos
+def union(conjunto_a, conjunto_b):
+    """
+    Retorna un nuevo conjunto con todos los elementos de A y B
+    """
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    actual = conjunto_b.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+# PUNTO 2.2: Intersección de dos conjuntos
+def interseccion(conjunto_a, conjunto_b):
+    """
+    Retorna un nuevo conjunto con los elementos comunes a A y B
+    """
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        if conjunto_b.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    print("="*60)
+    print("PARTE 1: INVENTARIO")
+    print("="*60)
+    print("Bodega A válida:", validar_unicidad(bodega_a))
+    print("Bodega B válida:", validar_unicidad(bodega_b))
+    print("¿Bodegas disjuntas?:", validar_disjuntas(bodega_a, bodega_b))
+
+    print("\n" + "="*60)
+    print("PARTE 2: ROLES")
+    print("="*60)
+    admin = Conjunto(["leer","escribir","eliminar"])
+    editor = Conjunto(["leer","escribir"])
+    print("Admin:", admin)
+    print("Editor:", editor)
+    print("Unión:", union(admin, editor))
+    print("Intersección:", interseccion(admin, editor))

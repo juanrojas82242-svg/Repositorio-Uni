@@ -1,0 +1,140 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        REPASO - CONJUNTOS
+                Materias de Estudiantes + Clubes Universitarios
+═══════════════════════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 1: MATERIAS DE ESTUDIANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+Usar conjuntos de Python para analizar materias inscritas por estudiantes.
+
+REGLAS:
+- Validar que un estudiante no tenga materias repetidas
+- Verificar si dos estudiantes comparten materias
+- Obtener la unión de materias de un grupo de estudiantes
+"""
+
+estudiante_a = ["Matemáticas","Física","Programación","Historia"]
+estudiante_b = ["Biología","Física","Programación","Arte"]
+
+# PUNTO 1.1: Validar unicidad de materias
+def validar_unicidad(materias):
+    """
+    Retorna True si no hay materias repetidas
+    """
+    return len(set(materias)) == len(materias)
+
+# PUNTO 1.2: Verificar si dos estudiantes comparten materias
+def tienen_materias_comun(est1, est2):
+    """
+    Retorna True si hay al menos una materia en común
+    """
+    return not set(est1).isdisjoint(set(est2))
+
+# PUNTO 1.3: Unión de materias de un grupo
+def union_materias(estudiantes):
+    """
+    Retorna un conjunto con todas las materias inscritas por el grupo
+    """
+    resultado = set()
+    for est in estudiantes:
+        resultado |= set(est)
+    return resultado
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 2: CLUBES UNIVERSITARIOS CON LISTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Implementar operaciones de conjuntos usando la clase Conjunto con listas enlazadas.
+
+CONTEXTO:
+Los estudiantes pueden pertenecer a diferentes clubes. Debes implementar diferencia
+y diferencia simétrica para comparar membresías.
+"""
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+class Conjunto:
+    def __init__(self, elementos=None):
+        self.cabeza = None
+        if elementos:
+            for e in elementos:
+                self.agregar(e)
+    
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+    
+    def agregar(self, x):
+        if not self.pertenece(x):
+            nuevo = Nodo(x)
+            nuevo.siguiente = self.cabeza
+            self.cabeza = nuevo
+    
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+# PUNTO 2.1: Diferencia de clubes
+def diferencia(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        if not conjunto_b.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+# PUNTO 2.2: Diferencia simétrica de clubes
+def diferencia_simetrica(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        if not conjunto_b.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    actual = conjunto_b.cabeza
+    while actual:
+        if not conjunto_a.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    print("="*60)
+    print("PARTE 1: MATERIAS")
+    print("="*60)
+    print("Estudiante A único:", validar_unicidad(estudiante_a))
+    print("Estudiante B único:", validar_unicidad(estudiante_b))
+    print("¿Comparten materias?:", tienen_materias_comun(estudiante_a, estudiante_b))
+    print("Unión de materias:", union_materias([estudiante_a, estudiante_b]))
+
+    print("\n" + "="*60)
+    print("PARTE 2: CLUBES UNIVERSITARIOS")
+    print("="*60)
+    club_deportes = Conjunto(["fútbol","baloncesto","natación"])
+    club_arte = Conjunto(["teatro","pintura","baloncesto"])
+    print("Club Deportes:", club_deportes)
+    print("Club Arte:", club_arte)
+    print("Diferencia (Deportes - Arte):", diferencia(club_deportes, club_arte))
+    print("Diferencia simétrica:", diferencia_simetrica(club_deportes, club_arte))

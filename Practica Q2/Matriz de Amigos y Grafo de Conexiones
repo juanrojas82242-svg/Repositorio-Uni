@@ -1,0 +1,140 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        REPASO - CONJUNTOS
+                Matriz de Amigos + Grafo de Conexiones
+═══════════════════════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 1: MATRIZ DE AMIGOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Usar conjuntos de Python para validar relaciones de amistad en una matriz.
+
+REGLAS:
+- Cada persona debe tener amigos únicos (sin repetidos)
+- Validar si dos personas tienen al menos un amigo en común
+- Obtener todos los amigos de un grupo de personas
+"""
+
+amigos = {
+    "ana": ["juan","maria","carlos"],
+    "juan": ["ana","sofia","pedro"],
+    "maria": ["ana","carlos","sofia"]
+}
+
+# PUNTO 1.1: Validar unicidad de amigos
+def validar_unicidad(lista_amigos):
+    """
+    Retorna True si no hay amigos repetidos
+    """
+    return len(set(lista_amigos)) == len(lista_amigos)
+
+# PUNTO 1.2: Validar si dos personas tienen amigos en común
+def tienen_amigos_comun(persona1, persona2):
+    """
+    Retorna True si hay al menos un amigo en común
+    """
+    return not set(amigos[persona1]).isdisjoint(set(amigos[persona2]))
+
+# PUNTO 1.3: Obtener todos los amigos de un grupo
+def union_amigos(grupo):
+    """
+    Retorna un conjunto con todos los amigos de las personas en el grupo
+    """
+    resultado = set()
+    for persona in grupo:
+        resultado |= set(amigos[persona])
+    return resultado
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 2: GRAFO DE CONEXIONES CON LISTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Implementar operaciones de conjuntos usando la clase Conjunto con listas enlazadas.
+
+CONTEXTO:
+Un grafo representa conexiones entre nodos. Debes implementar unión e intersección
+para comparar conexiones de dos nodos.
+"""
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+class Conjunto:
+    def __init__(self, elementos=None):
+        self.cabeza = None
+        if elementos:
+            for e in elementos:
+                self.agregar(e)
+    
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+    
+    def agregar(self, x):
+        if not self.pertenece(x):
+            nuevo = Nodo(x)
+            nuevo.siguiente = self.cabeza
+            self.cabeza = nuevo
+    
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+# PUNTO 2.1: Unión de conexiones
+def union(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    actual = conjunto_b.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+# PUNTO 2.2: Intersección de conexiones
+def interseccion(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        if conjunto_b.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    print("="*60)
+    print("PARTE 1: MATRIZ DE AMIGOS")
+    print("="*60)
+    print("Ana tiene amigos únicos:", validar_unicidad(amigos["ana"]))
+    print("¿Ana y Juan tienen amigos en común?:", tienen_amigos_comun("ana","juan"))
+    print("Unión de amigos (Ana y María):", union_amigos(["ana","maria"]))
+
+    print("\n" + "="*60)
+    print("PARTE 2: GRAFO DE CONEXIONES")
+    print("="*60)
+    nodo_a = Conjunto(["b","c","d"])
+    nodo_b = Conjunto(["c","d","e"])
+    print("Nodo A:", nodo_a)
+    print("Nodo B:", nodo_b)
+    print("Unión:", union(nodo_a, nodo_b))
+    print("Intersección:", interseccion(nodo_a, nodo_b))

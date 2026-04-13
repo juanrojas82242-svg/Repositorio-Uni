@@ -1,0 +1,58 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        REPASO - CONJUNTOS
+                Equipos de Fútbol + Roles de Jugadores
+═══════════════════════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 1: EQUIPOS DE FÚTBOL
+═══════════════════════════════════════════════════════════════════════════════
+
+Usar conjuntos de Python para analizar listas de jugadores en equipos.
+
+REGLAS:
+- Validar que un equipo no tenga jugadores repetidos
+- Verificar si dos equipos tienen jugadores en común
+- Obtener la diferencia de jugadores entre dos equipos
+"""
+
+equipo_a = ["Luis","Carlos","Andrés","Mateo","Juan"]
+equipo_b = ["Pedro","Carlos","Mateo","Santiago","Felipe"]
+
+# PUNTO 1.1: Validar unicidad en un equipo
+def validar_unicidad(equipo):
+    """
+    Retorna True si no hay jugadores repetidos
+    """
+    return len(set(equipo)) == len(equipo)
+
+# PUNTO 1.2: Verificar si dos equipos tienen jugadores en común
+def tienen_comun(equipo1, equipo2):
+    """
+    Retorna True si hay al menos un jugador en común
+    """
+    return not set(equipo1).isdisjoint(set(equipo2))
+
+# PUNTO 1.3: Diferencia de jugadores entre dos equipos
+def diferencia_jugadores(equipo1, equipo2):
+    """
+    Retorna los jugadores que están en equipo1 pero no en equipo2
+    """
+    return set(equipo1) - set(equipo2)
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 2: ROLES DE JUGADORES CON LISTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Implementar operaciones de conjuntos usando la clase Conjunto con listas enlazadas.
+
+CONTEXTO:
+Cada jugador puede tener roles (ejemplo: defensa, ataque, capitán).
+Debes implementar unión e intersección de roles.
+"""
+
+class Nodo:
+    def __init__(self, dato):
+        self.d

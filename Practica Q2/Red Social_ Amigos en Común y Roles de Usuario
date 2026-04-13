@@ -1,0 +1,135 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        REPASO - CONJUNTOS
+                Red Social: Amigos en Común + Roles de Usuario
+═══════════════════════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 1: AMIGOS EN COMÚN
+═══════════════════════════════════════════════════════════════════════════════
+
+Usar conjuntos de Python para recomendar amigos en una red social.
+
+REGLAS:
+- Validar que un usuario no tenga amigos repetidos
+- Verificar si dos usuarios tienen amigos en común
+- Recomendar amigos en común (intersección)
+"""
+
+usuario_a = ["juan","maria","sofia","carlos"]
+usuario_b = ["maria","pedro","carlos","andrés"]
+
+# PUNTO 1.1: Validar unicidad de amigos
+def validar_unicidad(amigos):
+    """
+    Retorna True si no hay amigos repetidos
+    """
+    return len(set(amigos)) == len(amigos)
+
+# PUNTO 1.2: Verificar si dos usuarios tienen amigos en común
+def tienen_amigos_comun(u1, u2):
+    """
+    Retorna True si hay al menos un amigo en común
+    """
+    return not set(u1).isdisjoint(set(u2))
+
+# PUNTO 1.3: Recomendar amigos en común
+def recomendar_amigos(u1, u2):
+    """
+    Retorna un conjunto con los amigos en común
+    """
+    return set(u1) & set(u2)
+
+
+"""
+═══════════════════════════════════════════════════════════════════════════════
+                PARTE 2: ROLES DE USUARIO CON LISTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Implementar operaciones de conjuntos usando la clase Conjunto con listas enlazadas.
+
+CONTEXTO:
+Los usuarios pueden tener roles en la red social (ejemplo: moderador, creador de contenido).
+Debes implementar unión e intersección de roles.
+"""
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.siguiente = None
+
+class Conjunto:
+    def __init__(self, elementos=None):
+        self.cabeza = None
+        if elementos:
+            for e in elementos:
+                self.agregar(e)
+    
+    def pertenece(self, x):
+        actual = self.cabeza
+        while actual:
+            if actual.dato == x:
+                return True
+            actual = actual.siguiente
+        return False
+    
+    def agregar(self, x):
+        if not self.pertenece(x):
+            nuevo = Nodo(x)
+            nuevo.siguiente = self.cabeza
+            self.cabeza = nuevo
+    
+    def __str__(self):
+        elementos = []
+        actual = self.cabeza
+        while actual:
+            elementos.append(str(actual.dato))
+            actual = actual.siguiente
+        return "{" + ", ".join(elementos) + "}"
+
+# PUNTO 2.1: Unión de roles
+def union(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    actual = conjunto_b.cabeza
+    while actual:
+        resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+# PUNTO 2.2: Intersección de roles
+def interseccion(conjunto_a, conjunto_b):
+    resultado = Conjunto()
+    actual = conjunto_a.cabeza
+    while actual:
+        if conjunto_b.pertenece(actual.dato):
+            resultado.agregar(actual.dato)
+        actual = actual.siguiente
+    return resultado
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CÓDIGO DE PRUEBA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    print("="*60)
+    print("PARTE 1: RED SOCIAL")
+    print("="*60)
+    print("Usuario A único:", validar_unicidad(usuario_a))
+    print("Usuario B único:", validar_unicidad(usuario_b))
+    print("¿Tienen amigos en común?:", tienen_amigos_comun(usuario_a, usuario_b))
+    print("Recomendación de amigos en común:", recomendar_amigos(usuario_a, usuario_b))
+
+    print("\n" + "="*60)
+    print("PARTE 2: ROLES DE USUARIO")
+    print("="*60)
+    moderador = Conjunto(["moderar","banear","crear_eventos"])
+    creador = Conjunto(["publicar","crear_eventos","editar"])
+    print("Moderador:", moderador)
+    print("Creador:", creador)
+    print("Unión de roles:", union(moderador, creador))
+    print("Intersección de roles:", interseccion(moderador, creador))
