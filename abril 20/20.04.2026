@@ -1,0 +1,137 @@
+def contar(n):
+    contador = 0 #se ejecuta 1 vez
+    for i in range(n):
+        contador += 1 #se ejecuta n veces
+        print(i) #se ejecuta n veces
+    
+    return contador
+
+#si el ciclo depende de la entrada, entonces el tiempo de ejecución es O(n)
+#si el ciclo no depende de la entrada, entonces el tiempo de ejecución es O(1)
+#propiedades analisis sintoctico:
+#1. El tiempo de ejecución se mide en función del tamaño de la entrada (n).
+#2. Se consideran las operaciones básicas (como asignaciones, comparaciones, etc.) como unidades de tiempo constante (O(1)).
+#3. Se ignoran las constantes multiplicativas y los términos de menor orden, enfocándose en el comportamiento asintótico a medida que n crece.
+#4. Se clasifican los algoritmos en categorías de complejidad (O(1), O(n), O(n^2), etc.) para describir su eficiencia.
+
+#si hay ciclos anidados, el tiempo de ejecución se multiplica. Por ejemplo, si hay un ciclo dentro de otro ciclo que ambos dependen de n, el tiempo de ejecución sería O(n^2).
+#si hay ciclos anidados pero el ciclo interno no depende de n, entonces el tiempo de ejecución sería O(n) porque el ciclo interno se ejecuta una cantidad constante de veces.
+#complejidad cuadratica explicada con ejemplo:
+
+def ejemplo_cuadratico(n):
+    contador = 0
+    for i in range(n): #se ejecuta n veces
+        for j in range(n): #se ejecuta n veces por cada iteración del ciclo externo
+            contador += 1 #se ejecuta n*n veces
+    return contador
+#en este caso, el tiempo de ejecución es O(n^2) porque el ciclo interno se ejecuta n veces por cada iteración del ciclo externo, resultando en n*n iteraciones en total.
+#complejidad lineal explicada con ejemplo:
+def ejemplo_lineal(n):
+    contador = 0
+    for i in range(n): #se ejecuta n veces
+        contador += 1 #se ejecuta n veces
+    return contador
+#en este caso, el tiempo de ejecución es O(n) porque el ciclo se ejecuta n veces y cada iteración realiza una cantidad constante de trabajo (incrementar el contador).
+
+#complejidad constante explicada con ejemplo:
+def ejemplo_constante(n):
+    contador = 0
+    contador += 1 #se ejecuta 1 vez
+    return contador
+#en este caso, el tiempo de ejecución es O(1) porque el número de operaciones realizadas no depende del tamaño de la entrada (n) y siempre se ejecuta una cantidad constante de trabajo.
+
+#complejidad logaritmica explicada con ejemplo:
+def ejemplo_logaritmico(n):
+    contador = 0
+    i = 1
+    while i < n: #se ejecuta log(n) veces
+        contador += 1 #se ejecuta log(n) veces
+        i *= 2 #se ejecuta log(n) veces
+    return contador
+
+#en este caso, el tiempo de ejecución es O(log n) porque el valor de i se duplica en cada iteración, lo que significa que el número de iteraciones crece logarítmicamente con respecto a n.
+#busqueda binaria es un ejemplo clásico de algoritmo con complejidad logarítmica, ya que divide el espacio de búsqueda a la mitad en cada paso, resultando en O(log n) tiempo de ejecución.
+def busqueda_binaria(arr, objetivo):
+    izquierda, derecha = 0, len(arr) - 1
+    while izquierda <= derecha:
+        medio = (izquierda + derecha) // 2
+        if arr[medio] == objetivo:
+            return medio
+        elif arr[medio] < objetivo:
+            izquierda = medio + 1
+        else:
+            derecha = medio - 1
+    return -1
+#en este caso, el tiempo de ejecución es O(log n) porque el algoritmo divide el espacio de búsqueda a la mitad en cada iteración, lo que resulta en un crecimiento logarítmico del número de comparaciones necesarias para encontrar el objetivo a medida que el tamaño del arreglo aumenta.
+
+
+#complejidad exponencial explicada con ejemplo:
+def ejemplo_exponencial(n):
+    if n == 0:
+        return 1
+    else:
+        return ejemplo_exponencial(n - 1) + ejemplo_exponencial(n - 1)
+#en este caso, el tiempo de ejecución es O(2^n) porque cada llamada a la función genera dos llamadas adicionales, lo que resulta en un crecimiento exponencial del número de llamadas a medida que n aumenta.
+
+#propiedad relacion de orden:
+#si f(n) = O(g(n)), entonces g(n) es un límite superior para f(n), lo que significa que f(n) no crece más rápido que g(n) a medida que n se acerca al infinito.
+#si f(n) = O(g(n)), entonces existe una constante C y un valor n
+#tal que f(n) <= C * g(n) para todos los n >= n0, lo que implica que f(n) está acotada por g(n) multiplicada por una constante a partir de cierto punto.
+
+#complejdad de n por log n explicada con ejemplo:
+def ejemplo_n_log_n(n):
+    contador = 0
+    for i in range(n): #se ejecuta n veces
+        j = 1
+        while j < n: #se ejecuta log(n) veces por cada iteración del ciclo externo
+            contador += 1 #se ejecuta n*log(n) veces
+            j *= 2 #se ejecuta log(n) veces por cada iteración del ciclo externo
+    return contador
+#en este caso, el tiempo de ejecución es O(n log n) porque el ciclo externo se ejecuta n veces y el ciclo interno se ejecuta log(n) veces por cada iteración del ciclo externo, resultando en un total de n * log(n) iteraciones.
+
+#algoritmo que reciba un arreglo y que devuelva el elemento que mas se repite en el arreglo:
+def elemento_mas_repetido(arr):
+    contador = {}
+    for num in arr: #se ejecuta n veces
+        if num in contador:
+            contador[num] += 1 #se ejecuta n veces
+        else:
+            contador[num] = 1 #se ejecuta n veces
+    
+    max_repeticiones = 0
+    elemento_mas_repetido = None
+    for num, repeticiones in contador.items(): #se ejecuta m veces, donde m es el número de elementos únicos en el arreglo
+        if repeticiones > max_repeticiones:
+            max_repeticiones = repeticiones #se ejecuta m veces
+            elemento_mas_repetido = num #se ejecuta m veces
+    
+    return elemento_mas_repetido
+#en este caso, el tiempo de ejecución es O(n + m) porque el primer ciclo se ejecuta n veces para contar las repeticiones de cada elemento, 
+# y el segundo ciclo se ejecuta m veces para encontrar el elemento con la mayor cantidad de repeticiones, donde m es el número de elementos únicos en el arreglo. 
+# En el peor caso, si todos los elementos son únicos, m sería igual a n, lo que resultaría en una complejidad total de O(n + n) = O(2n) = O(n).
+
+def elemento_mayoritario(arr):
+    mayor = 0
+    valor = 0
+    for i in range(len(arr)): #se ejecuta n veces
+        contador = 0
+        for j in range(len(arr)): #se ejecuta n veces por cada iteración del ciclo externo
+            if arr[i] == arr[j]:
+                contador += 1 #se ejecuta n*n veces
+        if contador > mayor:
+            mayor = contador #se ejecuta n veces
+            valor = arr[i] #se ejecuta n veces
+    return valor
+#en este caso, el tiempo de ejecución es O(n^2) porque el ciclo externo se ejecuta n veces y el ciclo interno también se ejecuta n veces por cada iteración del ciclo externo
+#, resultando en un total de n * n = n^2 iteraciones.
+#los ciclos dependen de la entrada, por lo que el tiempo de ejecución es O(n^2).
+
+print(elemento_mayoritario([1, 2, 3, 2, 1, 2, 3, 3, 3])) #deberia devolver 3
+print(elemento_mas_repetido([1, 2, 3, 2, 1, 2, 3, 3, 3])) #deberia devolver 3
+print(ejemplo_n_log_n(10)) #deberia devolver 30
+print(ejemplo_exponencial(5)) #deberia devolver 32
+print(ejemplo_logaritmico(16)) #deberia devolver 4
+print(ejemplo_constante(10)) #deberia devolver 1
+print(ejemplo_lineal(10)) #deberia devolver 10
+print(ejemplo_cuadratico(10)) #deberia devolver 100
+print(contar(10)) #deberia devolver 10
